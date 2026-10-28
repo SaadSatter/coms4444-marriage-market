@@ -2,9 +2,16 @@
 
 import math
 
-from models.player import Advertisement, Candidate, DateContext, Decision, GameContext
+from models.player import (
+	Advertisement,
+	Candidate,
+	DateContext,
+	Decision,
+	GameContext,
+	PlayerSnapshot,
+	RoundContext,
+)
 from models.player import Player as BasePlayer
-from models.player import PlayerSnapshot, RoundContext
 from models.profile import Profile, decrement
 
 
@@ -69,7 +76,8 @@ class Player6(BasePlayer):
 				else sum(
 					(count + 1 / 11) * self._gap(dim, self.ideal[dim], value)
 					for value, count in enumerate(traits)
-				) / (sum(traits) + 1)
+				)
+				/ (sum(traits) + 1)
 			)
 			theirs = (
 				self._gap(dim, candidate.ad.seek_value, self.profile[dim])
@@ -77,7 +85,8 @@ class Player6(BasePlayer):
 				else sum(
 					(count + 1 / 11) * self._gap(dim, value, self.profile[dim])
 					for value, count in enumerate(preferences)
-				) / (sum(preferences) + 1)
+				)
+				/ (sum(preferences) + 1)
 			)
 			total += mine + 0.5 * theirs
 		return total
@@ -91,7 +100,8 @@ class Player6(BasePlayer):
 		else:
 			choices = sorted(candidates, key=lambda c: (self._candidate_penalty(c), c.index))
 			choices = [
-				c for c in choices
+				c
+				for c in choices
 				if c.index not in self.observations
 				or self._acceptable(self._penalty(*self.observations[c.index]))
 			]
@@ -108,7 +118,9 @@ class Player6(BasePlayer):
 				counts = self.preference_counts[dim]
 				if sum(counts):
 					target = round(sum(v * n for v, n in enumerate(counts)) / sum(counts))
-					value += max(-self.max_projection_shift, min(self.max_projection_shift, target - value))
+					value += max(
+						-self.max_projection_shift, min(self.max_projection_shift, target - value)
+					)
 			projected.append(value)
 		return tuple(projected)
 
